@@ -47,11 +47,68 @@ class TestMcmc_graph_simulator(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.mcmc.get_distance(point1, badpoint) #Should raise error for not being in the same dimensions
 
+    def test_bridges(self):
+        graph = nx.Graph()
+
+        path1 = [(3,4),(3,3),(3,2),(2,2),(2,3)]
+        path2 = [(0,0),(1,1),(4,4)]
+
+        graph.add_path(path1)
+        graph.add_path(path2)
+
+        with self.assertRaises(ValueError):
+            self.mcmc.get_bridges(graph) #Should raise error since graph is not connected
+
+        graph.add_edge((1,1), (2,2))
+        graph.add_edge((2,2), (3,3)) #connect the graph
+
+        bridges = self.mcmc.get_bridges(graph)
+
+        self.assertNotEqual(len(bridges), 0)
+
+    def test_calculate_theta(self):
+        graph = nx.Graph()
+
+        graph.add_edge((0,0), (3,4), weight = 5)
+        graph.add_edge((3,4), (6,0), weight = 5)
+        graph.add_edge((3,4), (0,6), weight = 5)
+
+        theta = self.mcmc.calculate_theta(graph, (0,0), r = 1)
+        self.assertEqual(theta, 40)
+
+    def test_mutate_remove(self):
+        graph = nx.Graph()
+
+        graph.add_edge((0,0), (0,2), weight = 2)
+
+        with self.assertRaises(ValueError):
+            self.mcmc.mutate(graph, False) #Should raise error since all edges are bridges
+
+        graph.add_edge((0,0), (4,0), weight = 4)
+        graph.add_edge((4,0), (4,2), weight = 2)
+        graph.add_edge((4,2), (0,2), weight = 2)
+        graph.add_edge((0,0), (-2,0), weight = 2)
+
+        self.mcmc.mutate(graph, False)
+
+        self.assertEqual(len(graph.edges()), 4)
+        self.assertTrue(((0,0), (-2,0)) in graph.edges())
+
+    def test_mutate_add(self):
+        graph = nx.Graph()
+        graph.add_edge((0,0), (3,0), weight = 3)
+        graph.add_edge((0,0), (0,4), weight = 4)
+
+        self.mcmc.mutate(graph, True)
+
+        self.assertTrue(((3,0),(0,4)) in graph.edges()) #Check that only possible edge has been added
+
+        with self.assertRaises(ValueError):
+            self.mcmc.mutate(graph, True)
+
+        self.assertTrue(graph[(0,4)][(3,0)]['weight'] == 5) #Check that weight of added edge is correct
 
     def tearDown(self):
-        pass
-
-    def test_000_something(self):
         pass
 '''
     def test_command_line_interface(self):
