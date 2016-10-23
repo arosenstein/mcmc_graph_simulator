@@ -13,6 +13,7 @@ import sys
 import unittest
 from contextlib import contextmanager
 from click.testing import CliRunner
+import networkx as nx
 
 from mcmc_graph_simulator.mcmc_graph_simulator import *
 from mcmc_graph_simulator import cli
@@ -23,24 +24,28 @@ class TestMcmc_graph_simulator(unittest.TestCase):
 
     def setUp(self):
         self.nodes = [(1,2), (3,3), (5,5), (0,0)]
-        self.g = Graph(self.nodes)
+        self.mcmc = mcmc_graph(self.nodes)
+        self.g = self.mcmc.current_graph
         pass
 
     def test__init__(self):
-        self.assertEqual(len(self.g.nodes), len(self.nodes)) #Graph should have all of the nodes inserted
-        self.assertEqual(len(self.g.edges), len(self.nodes) - 1)  #Graph should have n - 1 edges
+        self.assertTrue(nx.is_connected(self.g))
+        for edge in self.g.edges_iter(None, True, True):
+            self.assertIsNotNone(edge[2]['weight'])
+            self.assertNotEqual(edge[2]['weight'], 0)
+        pass
 
     def test_connectedness(self):
-        self.assertTrue(self.g.isConnected())
+        self.assertTrue(nx.is_connected(self.g))
 
     def test_distance_calculator(self):
         point1 = (0,0)
         point2 = (3,4)
-        self.assertEqual(self.g.get_distance(point1, point2), 5)
+        self.assertEqual(self.mcmc.get_distance(point1, point2), 5)
 
         badpoint = (100,0,0)
         with self.assertRaises(ValueError):
-            self.g.get_distance(point1, badpoint)
+            self.mcmc.get_distance(point1, badpoint) #Should raise error for not being in the same dimensions
 
 
     def tearDown(self):

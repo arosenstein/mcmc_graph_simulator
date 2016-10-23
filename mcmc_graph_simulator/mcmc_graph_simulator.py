@@ -4,9 +4,9 @@ import networkx as nx
 import numpy as np
 
 
-class Graph:
+class mcmc_graph:
 
-	adjacency_matrix = []
+	markov_chain = []
 
 
 	def __init__(self, nodes):
@@ -18,15 +18,17 @@ class Graph:
 		nodes : list of touples
 	
 		'''
-		self.nodes = []
-		self.edges = []
+		self.markov_chain = []
+		graph = nx.Graph()
 
-		for node in nodes:
-			self.nodes.append(node)
+		graph.add_path(nodes)
 
-		for i in range(len(nodes) - 1):
-			self.edges.append((nodes[i], nodes[i+1]))
+		for edge in graph.edges():
+			graph[edge[0]][edge[1]].update(weight = self.get_distance(edge[0], edge[1]))
 
+		self.markov_chain.append(graph)
+
+		self.current_graph = graph
 
 
 	def isConnected(self):
