@@ -21,7 +21,6 @@ script:
   - pip install .
   - pip install networkx
   - pip install numpy
-  - pip install random
 
 # After you create the Github repo and add it to Travis, run the
 # travis_pypi_setup.py script to finish PyPI deployment setup
