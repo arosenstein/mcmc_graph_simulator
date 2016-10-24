@@ -2,7 +2,7 @@
 from math import sqrt, e
 import networkx as nx
 import numpy as np
-from random import choice
+from random import choice, random
 
 
 class mcmc_graph:
@@ -128,7 +128,7 @@ class mcmc_graph:
 			for i in range(len(shortest_path) - 1):
 				sum_of_paths += graph[shortest_path[i]][shortest_path[i+1]]['weight']
 
-		return self.r * sum_of_weights + sum_of_paths
+		return r * sum_of_weights + sum_of_paths
 
 	def mutate(self, graph, add = True):
 		'''This function changes the graph, either adding or removing an edge
@@ -179,6 +179,84 @@ class mcmc_graph:
 			graph.remove_edge(u,v)
 
 			return graph
+
+	def determine_mutation(self, graph):
+		'''This function changes the graph, either adding or removing an edge
+
+		Parameters
+		-----
+			graph: a networkx graph
+			
+		Return
+		-----
+			0 if removing edge
+			1 if adding edge
+		'''
+
+		n = len(graph.nodes())
+		e = len(graph.edges())
+		max_edges = n * (n - 1) / 2
+		min_edges = n - 1
+
+		p = (max_edges - e)/(max_edges - min_edges)
+
+		if random() < p:
+			return 1
+
+		else:
+			return 0
+
+	def predict_next(self):
+		'''This function ties together all other functions, and using the Metropolis-Hastings algorithm, predicts the next graph.
+
+		It performs the following steps:
+			1. Creates a new proposed graph by changing the state of one of the edges of the current graph
+			2. Calculates the Metropolis-Hastings acceptance probability
+			3. Generates a random number from 0 to 1
+			4. Determines whether or not to accept proposed graph
+			
+		Return
+		-----
+			Mutated graph
+		'''
+
+		graph = self.current_graph
+
+		#create a new object for the proposed graph, and copy current graph
+		proposed_graph = nx.Graph()
+		proposed_graph.add_edges_from(graph.edges(data = True))
+
+		#mutate proposed graph
+		self.mutate(proposed_graph, self.determine_mutation(proposed_graph) == 1)
+
+		#calculate f(X_i, X_j)
+		anchor = graph.nodes()[0]
+		theta_i = self.calculate_theta(graph, anchor, self.r)
+		theta_j = self.calculate_theta(proposed_graph, anchor, self.r)
+
+		f_xi_xj = e**(-(theta_i - theta_j)/self.T)
+
+		n = len(graph.nodes())
+		q_i_j = 1 / (n * (n - 1) / 2 - len(self.get_bridges(graph)))
+		q_j_i = 1 / (n * (n - 1) / 2 - len(self.get_bridges(proposed_graph)))
+
+		#Calculated Metropolis-Hastings acceptance probability
+		a_ij = min(f_xi_xj * q_i_j / q_j_i, 1)
+
+		U = random()
+
+		if (U <= a_ij):
+			#accept proposed graph
+			self.markov_chain.append(proposed_graph)
+			self.current_graph = proposed_graph
+			return self.current_graph
+
+		else:
+			#reject proposed graph
+			self.markov_chain.append(graph)
+			return graph
+
+
 
 
 

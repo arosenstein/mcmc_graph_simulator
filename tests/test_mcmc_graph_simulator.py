@@ -23,7 +23,7 @@ from mcmc_graph_simulator import cli
 class TestMcmc_graph_simulator(unittest.TestCase):
 
     def setUp(self):
-        self.nodes = [(1,2), (3,3), (5,5), (0,0)]
+        self.nodes = [(1,2), (3,3), (5,5), (0,0), (1,1), (2,2), (15,15), (6,2)]
         self.mcmc = mcmc_graph(self.nodes)
         self.g = self.mcmc.current_graph
         pass
@@ -107,6 +107,45 @@ class TestMcmc_graph_simulator(unittest.TestCase):
             self.mcmc.mutate(graph, True)
 
         self.assertTrue(graph[(0,4)][(3,0)]['weight'] == 5) #Check that weight of added edge is correct
+
+    def test_mutation_type(self):
+        graph = nx.Graph()
+        graph.add_edge(0,1)
+        graph.add_edge(0,2)
+        graph.add_edge(0,3)
+        graph.add_edge(1,2)
+        graph.add_edge(1,3)
+        graph.add_edge(2,3)
+
+        #Fill all edges, so function should return remove
+
+        choice = self.mcmc.determine_mutation(graph)
+
+        self.assertEqual(choice, 0)
+
+        graph.remove_edge(0,2)
+        graph.remove_edge(0,3)
+        graph.remove_edge(1,3)
+
+        #remove until n-1 edges remain so function should add
+
+        choice = self.mcmc.determine_mutation(graph)
+
+        self.assertEqual(choice, 1) 
+
+        graph.add_edge(0,3)
+
+        choice = self.mcmc.determine_mutation(graph)
+
+        self.assertTrue(choice == 0 or choice == 1) 
+
+    def test_mcmc(self):
+        #purpose of this test is to check if mcmc runs for n iterations
+        for i in range(20):
+            self.mcmc.predict_next()
+
+        self.assertEqual(len(self.mcmc.markov_chain), 21)
+
 
     def tearDown(self):
         pass
