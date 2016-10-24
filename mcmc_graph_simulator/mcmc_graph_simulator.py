@@ -56,7 +56,6 @@ class mcmc_graph:
 
 		if(not nx.is_connected(graph)):
 			raise ValueError("Graph is not connected")
-			return
 
 		bridges = []
 
@@ -93,7 +92,6 @@ class mcmc_graph:
 	    
 	    if(len(point1) != len(point2)):
 	        raise ValueError("Points are not of the same dimension")
-	        return
 	    
 	    distance = 0
 	    
@@ -255,11 +253,3 @@ class mcmc_graph:
 			#reject proposed graph
 			self.markov_chain.append(graph)
 			return graph
-
-
-
-
-
-
-
-
