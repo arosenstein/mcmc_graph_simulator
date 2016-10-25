@@ -108,20 +108,32 @@ class TestMcmc_graph_simulator(unittest.TestCase):
 
         self.assertTrue(graph[(0,4)][(3,0)]['weight'] == 5) #Check that weight of added edge is correct
 
+    def test_nearly_complete_graph(self):
+        #Tests a graph where there is only one possible edge to add
         graph = nx.Graph()
-        nodes = [(0,0), (0,1), (0,2), (0,3)]
+        nodes = [(0,0), (0,1), (0,2), (0,3), (0,4), (0,5)]
 
         graph.add_edge((0,0), (0,1), weight = 1)
         graph.add_edge((0,0), (0,2), weight = 2)
         graph.add_edge((0,0), (0,3), weight = 3)
+        graph.add_edge((0,0), (0,4), weight = 4)
+        graph.add_edge((0,0), (0,5), weight = 5)
         graph.add_edge((0,1), (0,2), weight = 1)
         graph.add_edge((0,1), (0,3), weight = 2)
+        graph.add_edge((0,1), (0,4), weight = 3)
+        graph.add_edge((0,1), (0,5), weight = 4)
+        graph.add_edge((0,2), (0,3), weight = 1)
+        graph.add_edge((0,2), (0,4), weight = 2)
+        graph.add_edge((0,2), (0,5), weight = 3)
+        graph.add_edge((0,3), (0,4), weight = 1)
+        graph.add_edge((0,3), (0,5), weight = 2)
+
 
         for i in range(10): #Check that node is switched if node is connected to every other node
             self.mcmc.mutate(graph, True)
-            graph.remove_edge((0,3), (0,2))
+            graph.remove_edge((0,4), (0,5))
 
-        self.assertEqual(len(graph.edges()), 5)
+        self.assertEqual(len(graph.edges()), 14)
 
     def test_mutation_type(self):
         graph = nx.Graph()
