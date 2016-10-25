@@ -73,7 +73,7 @@ class TestMcmc_graph_simulator(unittest.TestCase):
         graph.add_edge((3,4), (6,0), weight = 5)
         graph.add_edge((3,4), (0,6), weight = 5)
 
-        theta = self.mcmc.calculate_theta(graph, (0,0), r = 1)
+        theta = self.mcmc.calculate_theta(graph, r = 1)
         self.assertEqual(theta, 40)
 
     def test_mutate_remove(self):
@@ -184,10 +184,6 @@ class TestMcmc_graph_simulator(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.mcmc.get_longest_shortest_path(graph, (0,0)) #Should raise error since not connected
-
-        #After removing node, check that the longest shortest path is different
-        graph.remove_node((3,0))
-        self.assertNotEqual(self.mcmc.get_longest_shortest_path(graph, (0,0)), 3)
 
     def test_mcmc(self):
         #purpose of this test is to check if mcmc runs for n iterations

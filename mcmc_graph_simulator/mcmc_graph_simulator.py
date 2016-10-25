@@ -30,7 +30,7 @@ class mcmc_graph:
 		self.r = r
 		self.T = T
 		self.markov_chain = []
-		self.node0 = nodes[0]
+		self.node0 = (0,0)
 		graph = nx.Graph()
 
 		#graph.add_path(nodes)
@@ -69,9 +69,13 @@ class mcmc_graph:
 		if anchor is None:
 			anchor = self.node0
 		
-		lengths = nx.single_source_dijkstra_path_length(graph, source = anchor, weight = 'weight')
+		d = nx.single_source_dijkstra_path_length(graph, source = anchor, weight = 'weight')
 
-		return max([v for k, v in lengths.items()])
+		value = 0
+		for item in d:
+			value = max(value, d[item])
+
+		return value
 
 
 
@@ -309,13 +313,28 @@ class mcmc_graph:
 
 		U = random()
 
+		accepted_graph = None
+
 		if (U <= a_ij):
 			#accept proposed graph
 			self.markov_chain.append(proposed_graph)
 			self.current_graph = proposed_graph
-			return self.current_graph
+			accepted_graph = self.current_graph
 
 		else:
 			#reject proposed graph
 			self.markov_chain.append(graph)
-			return graph
+			accepted_graph = graph
+
+		#update statistics
+
+		count = len(self.markov_chain) - 1
+
+		self.update_mean(self.avg_node0_connections, count, len(accepted_graph[self.node0]))
+
+		self.update_mean(self.avg_total_edges, count, len(accepted_graph.edges()))
+		
+		ls_path = self.get_longest_shortest_path(accepted_graph, self.node0)
+		self.update_mean(self.avg_longest_shortest_path, count, ls_path)
+
+		return accepted_graph
