@@ -13,7 +13,7 @@ mcmc_graph_simulator
 [![Coverage Status](https://coveralls.io/repos/github/arosenstein/mcmc_graph_simulator/badge.svg?branch=master)](https://coveralls.io/github/arosenstein/mcmc_graph_simulator?branch=master)
 
 
-A Markov-Chain Monte Carlo simulator for cevaluating graphs using python.
+A Markov-Chain Monte Carlo simulator for evaluating graphs using python.
 
 
 * Free software: MIT license
