@@ -158,7 +158,8 @@ class mcmc_graph:
 				if(len(graph[node1]) + 1 == len(graph.nodes())):
 					#select a different node for node1 if it is connected to every other node
 					node1 = choice(graph.nodes())
-				node2 = choice(graph.nodes())
+				else:
+					node2 = choice(graph.nodes())
 
 			graph.add_edge(node1, node2, weight = self.get_distance(node1, node2))
 
