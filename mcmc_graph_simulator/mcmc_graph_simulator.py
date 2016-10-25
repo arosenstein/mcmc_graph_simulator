@@ -8,6 +8,9 @@ from random import choice, random
 class mcmc_graph:
 
 	markov_chain = []
+	avg_node0_connections = None
+	avg_total_edges = None
+	avg_longest_shortest_path = None
 
 
 	def __init__(self, nodes, r = 1, T = 1):
@@ -37,6 +40,40 @@ class mcmc_graph:
 
 		self.markov_chain.append(graph)
 		self.current_graph = graph
+
+		self.avg_node0_connections = len(graph[self.node0])
+		self.avg_total_edges = len(graph.edges())
+		self.avg_longest_shortest_path = self.get_longest_shortest_path(graph, self.node0)
+
+	def get_longest_shortest_path(self, graph, anchor = None):
+		'''Calculates the longest dijkstra path in a graph with respect to the anchor node.
+		
+		Parameter
+		-----
+
+			graph: networkx Graph
+
+			anchor: tuple
+				node in graph to reference points from
+
+
+		Return
+		-----
+
+			length: float
+				Length of the longest shortest path in the graph
+		'''
+		if(not nx.is_connected(graph)):
+			raise ValueError("Graph is not connected")
+
+		if anchor is None:
+			anchor = self.node0
+		
+		lengths = nx.single_source_dijkstra_path_length(graph, source = anchor, weight = 'weight')
+
+		return max([v for k, v in lengths.items()])
+
+
 
 
 	def get_bridges(self, graph):
@@ -101,7 +138,7 @@ class mcmc_graph:
 	    return sqrt(distance)
 
 
-	def calculate_theta(self, graph, anchor, r = 1):
+	def calculate_theta(self, graph, anchor = None, r = 1):
 		'''This function sums the edge weights and all of the shortest paths from an anchor node (node0) to every other node
 
 		Parameters
@@ -113,6 +150,9 @@ class mcmc_graph:
 			Theta value calculated for the graph
 		'''
 		
+		if anchor is None:
+			anchor = self.node0
+
 		sum_of_weights = 0
 
 		for u, v, d in graph.edges(data = True):
@@ -204,6 +244,31 @@ class mcmc_graph:
 
 		else:
 			return 0
+
+	def update_mean(self, mean, count, new_value):
+		'''This is an online algorithm to calculate the mean of a set of values.
+		The value of mean is updated
+		
+		Parameters
+		-----
+			mean: float
+				the current mean of a set of n values
+			
+			count: int
+				the number of values to calulate the mean
+
+			new_value: float
+
+			
+		Return
+		-----
+			mean: float
+				the updated mean value
+
+		'''
+		mean = (mean * count + new_value) / (count + 1)
+		return mean
+
 
 	def predict_next(self):
 		'''This function ties together all other functions, and using the Metropolis-Hastings algorithm, predicts the next graph.
