@@ -166,6 +166,29 @@ class TestMcmc_graph_simulator(unittest.TestCase):
 
         self.assertTrue(choice == 0 or choice == 1) 
 
+    def test_update_mean(self):
+        self.assertEqual(self.mcmc.update_mean(10, 5, 10), 10)
+        self.assertEqual(self.mcmc.update_mean(10, 5, 16), 11)
+
+    def test_longest_shortest_path(self):
+        graph = nx.Graph()
+        graph.add_edge((0,0), (1,0), weight = 1)
+        graph.add_edge((0,0), (2,0), weight = 2)
+        graph.add_edge((0,0), (3,0), weight = 3)
+        graph.add_edge((0,0), (0,1), weight = 1)
+        graph.add_edge((0,0), (0,2), weight = 2)
+
+        self.assertEqual(self.mcmc.get_longest_shortest_path(graph, (0,0)), 3)
+
+        graph.remove_edge((0,0), (3,0))
+
+        with self.assertRaises(ValueError):
+            self.mcmc.get_longest_shortest_path(graph, (0,0)) #Should raise error since not connected
+
+        #After removing node, check that the longest shortest path is different
+        graph.remove_node((3,0))
+        self.assertNotEqual(self.mcmc.get_longest_shortest_path(graph, (0,0)), 3)
+
     def test_mcmc(self):
         #purpose of this test is to check if mcmc runs for n iterations
         for i in range(20):
