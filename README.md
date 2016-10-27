@@ -12,13 +12,6 @@ This is a Markov-Chain Monte Carlo (MCMC) simulator for evaluating graphs using 
 
 * Documentation: https://mcmc-graph-simulator.readthedocs.io.
 
-##Unit Testing
-
-In order to run the unit tests, execute:
-	
-	$ python setup.py test
-
-The unit tests achieve 100% code coverage.
 
 ##Features
 
@@ -64,6 +57,13 @@ There are two main steps for a user to run the simulation.
 
 For specific information on how the calculations are performed, please refer to the appropriate docstring
 
+##Unit Testing
+
+In order to run the unit tests, execute:
+	
+	$ python setup.py test
+
+The unit tests achieve 100% code coverage.
 
 ##TODO
 
