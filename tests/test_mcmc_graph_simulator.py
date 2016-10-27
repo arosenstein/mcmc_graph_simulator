@@ -178,7 +178,7 @@ class TestMcmc_graph_simulator(unittest.TestCase):
         graph.add_edge((0,0), (0,1), weight = 1)
         graph.add_edge((0,0), (0,2), weight = 2)
 
-        self.assertEqual(self.mcmc.get_longest_shortest_path(graph, (0,0)), 3)
+        self.assertEqual(self.mcmc.get_longest_shortest_path(graph), 3)
 
         graph.remove_edge((0,0), (3,0))
 
