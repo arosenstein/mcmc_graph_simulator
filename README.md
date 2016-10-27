@@ -10,10 +10,7 @@
 
 This is a Markov-Chain Monte Carlo (MCMC) simulator for evaluating graphs using python.
 
-
-* Free software: MIT license
 * Documentation: https://mcmc-graph-simulator.readthedocs.io.
-
 
 ##Unit Testing
 
@@ -21,17 +18,50 @@ In order to run the unit tests, execute:
 	
 	$ python setup.py test
 
+The unit tests achieve 100% code coverage.
+
 ##Features
 
 * Using MCMC graph structures are predicted using relative probabilities.
 
-* This is acheived using the [Metropolis-Hastings](https://en.wikipedia.org/wiki/Metropolis–Hastings_algorithm) algorithm
+* This is achieved using the [Metropolis-Hastings](https://en.wikipedia.org/wiki/Metropolis–Hastings_algorithm) algorithm
+
+##Running the Code
+
+There are two main steps for a user to run the simulation.
+
+1. Construct an instance of the mcmc_graph object by passing a list of graph verticies (cartesian coordinates), $r$, and $T$ (temperature) parameters
+    
+    nodes = [(0,0), (0,2), (0,4), (22, 100), (-4, 4)]
+    r = 0.3
+    T = 2
+    mcmc = mcmc_graph(nodes, r, T)
+
+2. Run the simulation using the desired number of timesteps
+
+	timesteps = 10000
+	stats = mcmc.run(timesteps)
+
+3. A list `stats` is returned. It contains the following information
+
+	* The expected value of nodes connected to node0
+
+	* The expected value of the total edges in the graph
+
+	* The expected value of the longest shortest path in the graph
+
+	* A list of the  top 1% most occuring graphs in the Markov Chain
+
+For specific information on how the calculations are performed, please refer to the appropriate docstring
 
 
 ##TODO
 
-Credits
+Credits & License
 ---------
+
+* Free software: MIT license
+
 
 This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage) and the [`audreyr/cookiecutter-pypackage`](https://github.com/audreyr/cookiecutter-pypackage) project template.
 
