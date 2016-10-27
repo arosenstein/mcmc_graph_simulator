@@ -30,7 +30,7 @@ The unit tests achieve 100% code coverage.
 
 There are two main steps for a user to run the simulation.
 
-1. Construct an instance of the mcmc_graph object by passing a list of graph verticies (cartesian coordinates), $r$, and $T$ (temperature) parameters
+1. Construct an instance of the mcmc_graph object by passing a list of graph verticies (2-D cartesian coordinates), $r$, and $T$ (temperature) parameters
     
     nodes = [(0,0), (0,2), (0,4), (22, 100), (-4, 4)]
     r = 0.3
@@ -56,6 +56,12 @@ For specific information on how the calculations are performed, please refer to 
 
 
 ##TODO
+
+Expand simulation to cover $n$-dimensional coordinate systems
+
+* This has already been mostly achieved, it is however not yet fully covered in the testing. Most of the current methods are generalized for $n$-dimensional systems
+
+* Add an option for the user to observe the graphs generated
 
 Credits & License
 ---------
