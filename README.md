@@ -26,6 +26,12 @@ The unit tests achieve 100% code coverage.
 
 * This is achieved using the [Metropolis-Hastings](https://en.wikipedia.org/wiki/Metropolis–Hastings_algorithm) algorithm
 
+* Implementation of an online expected value calculation algorithm
+
+* Gives examples of the top 1% of graphs in the stationary distribution
+
+* Calculates expected maximum dijkstra path in each graph in the Markov Chain
+
 ##Running the Code
 
 There are two main steps for a user to run the simulation.
