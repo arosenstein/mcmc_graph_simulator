@@ -185,13 +185,21 @@ class TestMcmc_graph_simulator(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.mcmc.get_longest_shortest_path(graph, (0,0)) #Should raise error since not connected
 
-    def test_mcmc(self):
+    def test_predict_next(self):
         #purpose of this test is to check if mcmc runs for n iterations
         for i in range(20):
             self.mcmc.predict_next()
 
         self.assertEqual(len(self.mcmc.markov_chain), 21)
 
+    def test_quantile(self):
+        q = self.mcmc.quantile([0,0,0,0,2,3,4,100,100], 50)
+        self.assertEqual(set(q), set([0,100])) #Convert to set to avoid errors with ordering of elements
+
+    def test_run(self):
+        #test possible to run with 10000 iterations
+        stats = self.mcmc.run(10000)
+        self.assertEqual(len(stats), 4)
 
     def tearDown(self):
         pass

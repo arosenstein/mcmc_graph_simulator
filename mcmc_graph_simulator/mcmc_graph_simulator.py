@@ -30,7 +30,7 @@ class mcmc_graph:
 		self.r = r
 		self.T = T
 		self.markov_chain = []
-		self.node0 = (0,0)
+		self.node0 = (0,)*len(nodes[0])
 		graph = nx.Graph()
 
 		#graph.add_path(nodes)
@@ -272,6 +272,91 @@ class mcmc_graph:
 		'''
 		mean = (mean * count + new_value) / (count + 1)
 		return mean
+
+	def run(self, iterations):
+		'''This is the 'main' function to run the MCMC program. It returns all relevant statistics.
+		
+		Parameters
+		-----
+			iterations: int
+				the number of iterations to preform the MCMC simulation
+			
+		Return
+		-----
+			node0_connections: float
+				the expected value of nodes connected to node0
+
+			total_edges: float
+				the expected value of the total edges in the graph
+
+			longest_shortest_path: float
+				the expected value of the longest shortest path in the graph
+
+			top_1_percent : list
+				a list of the  top 1% most occuring graphs in the Markov Chain
+
+		'''
+
+		for i in range(iterations):
+			self.predict_next()
+
+		stats = []
+
+		stats.append(self.avg_node0_connections)
+		stats.append(self.avg_total_edges)
+		stats.append(self.avg_longest_shortest_path)
+		stats.append(self.quantile(self.markov_chain))
+
+		return stats
+
+	def quantile(self, graphs, percentile = 99):
+		'''Calculates the top 1% most commonly occuring graphs
+		
+		Parameters
+		-----
+			graphs: list
+				the graphs from MCMC to quantile
+
+			percentile: int, optional
+				the percentile above which the most occuring graphs are desired
+			
+		Return
+		-----
+			top_1_percent : list
+				a list of the  top 1% most occuring graphs in the Markov Chain
+		'''
+
+		uniques = {}
+		#create dictionary where keys are the graphs, and values are the count
+
+		for graph in graphs:
+
+			if graph not in uniques:
+				uniques[graph] = 1
+
+			else:
+				uniques[graph] += 1
+
+		#Obtain the graphs in the top desired percentile
+		counts = [uniques[k] for k in uniques]
+		p = .01 * percentile * len(graphs)
+		
+		total = len(graphs)
+		sorted(counts)
+
+		top_1_counts = []
+
+		while(sum(counts) >= p):
+			top_1_counts.append(counts.pop(0))
+
+		top_1_percent = []
+
+		for k, v in uniques.items():
+			if v in top_1_counts:
+				top_1_percent.append(k)
+
+		return top_1_percent
+
 
 
 	def predict_next(self):
