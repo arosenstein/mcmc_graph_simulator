@@ -32,15 +32,19 @@ There are two main steps for a user to run the simulation.
 
 1. Construct an instance of the mcmc_graph object by passing a list of graph verticies (2-D cartesian coordinates), $r$, and $T$ (temperature) parameters
     
+    ```python
     nodes = [(0,0), (0,2), (0,4), (22, 100), (-4, 4)]
     r = 0.3
     T = 2
     mcmc = mcmc_graph(nodes, r, T)
+    ```
 
 2. Run the simulation using the desired number of timesteps
 
+	```python
 	timesteps = 10000
 	stats = mcmc.run(timesteps)
+	```
 
 3. A list `stats` is returned. It contains the following information
 
