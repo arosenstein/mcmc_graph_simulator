@@ -16,7 +16,6 @@ from click.testing import CliRunner
 import networkx as nx
 
 from mcmc_graph_simulator.mcmc_graph_simulator import *
-from mcmc_graph_simulator import cli
 
 
 
