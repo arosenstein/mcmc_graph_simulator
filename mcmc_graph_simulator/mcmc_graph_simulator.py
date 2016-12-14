@@ -3,7 +3,7 @@ from math import sqrt, e
 import networkx as nx
 import numpy as np
 from random import choice, random
-
+import multiprocessing as mp
 
 class mcmc_graph:
 
@@ -118,7 +118,7 @@ class mcmc_graph:
 
 
 	def get_distance(self, point1, point2):
-	    '''Calculate distance between two point
+	    '''Calculates distance between two points
 	    
 	    Parameters
 	    -----
@@ -423,3 +423,40 @@ class mcmc_graph:
 		self.update_mean(self.avg_longest_shortest_path, count, ls_path)
 
 		return accepted_graph
+
+
+class parallel_mcmc:
+	'''Runs multiple mcmc simulations in parallel'''
+
+	def __init__(self, nodes, r = 1, T = 1):
+		self.nodes = nodes
+		self.r = r
+		self.T = T
+
+	def run(self, iterations):
+		#Run n simulations each with the number of iterations specified in parallel, and average the result statistics
+		#Returns the same statistics as mcmc_graph class, just averaged out over all parallel processes
+		iterations = 10
+		count = mp.cpu_count()
+
+		params = [iterations]*count
+		p = mp.Pool()
+		result = p.map(self._run, params)
+		p.close()
+		
+		avg_node0_connections = []
+		avg_total_edges = []
+		avg_longest_shortest_path = []
+		
+		for r in result:
+			avg_node0_connections.append(r[0])
+			avg_total_edges.append(r[1])
+			avg_longest_shortest_path.append(r[2])
+
+		return np.mean(avg_node0_connections), np.mean(avg_total_edges), np.mean(avg_longest_shortest_path)
+
+
+	def _run(self, iterations):
+		mcmc = mcmc_graph(self.nodes, self.r, self.T)
+		return mcmc.run(iterations)
+

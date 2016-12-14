@@ -202,3 +202,16 @@ class TestMcmc_graph_simulator(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+class TestParallel_mcmc(unittest.TestCase):
+    def setUp(self):
+        nodes = [(0,0), (1,2), (3,3), (3,-5), (0,2), (1,-1), (-2,-2), (1,5), (6,2)]
+        self.mcmc = parallel_mcmc(nodes)
+        pass
+
+    def test_parallel_run(self):
+        ans = self.mcmc.run(1000)
+        self.assertEqual(len(ans), 3)
+
+    def tearDown(self):
+        pass

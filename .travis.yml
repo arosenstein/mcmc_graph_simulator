@@ -28,6 +28,7 @@ install:
 - pip install networkx
 - pip install numpy
 - pip install coveralls
+- pip install multiprocessing
 language: python
 python: 3.5
 script:
