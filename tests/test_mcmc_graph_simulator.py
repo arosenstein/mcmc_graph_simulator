@@ -210,8 +210,10 @@ class TestParallel_mcmc(unittest.TestCase):
         pass
 
     def test_parallel_run(self):
-        ans = self.mcmc.run(1000)
-        self.assertEqual(len(ans), 3)
+        ans1 = self.mcmc._run(1000)
+        ans2 = self.mcmc.run(1000)
+        self.assertEqual(len(ans1), 3)
+        self.assertEqual(len(ans1), 4)
 
     def tearDown(self):
         pass
