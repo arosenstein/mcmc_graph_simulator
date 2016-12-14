@@ -21,6 +21,8 @@ This is a Markov-Chain Monte Carlo (MCMC) simulator for evaluating graphs using 
 
 * Calculates expected maximum dijkstra path in each graph in the Markov Chain
 
+* Runs multiple MCMC simulations in parallel and averages them to get proper statistical results
+
 ##Running the Code
 
 There are two main steps for a user to run the simulation.
